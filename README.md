@@ -1,151 +1,133 @@
-# Nginx Proxy Manager mit Docker Compose
+# Nginx Proxy Manager Docker Setup
 
-Dieses Repository enthält die notwendigen Konfigurationsdateien, um Nginx Proxy Manager mit Docker Compose auf einfache Weise einzurichten. Diese Lösung ermöglicht es Ihnen, eine leistungsstarke Nginx-basierte Reverse-Proxy-Lösung mit einer benutzerfreundlichen Weboberfläche zu betreiben.
+This repository contains a Docker Compose configuration for easily deploying Nginx Proxy Manager with a MariaDB database backend. The setup uses environment variables for all configuration options, making it flexible and secure.
 
-## 📋 Übersicht
+## What is Nginx Proxy Manager?
 
-Nginx Proxy Manager bietet eine grafische Benutzeroberfläche zum Verwalten von Nginx-Proxy-Hosts mit Features wie:
+Nginx Proxy Manager (NPM) is a Docker container that enables you to easily forward domains and subdomains to your various Docker containers and other services, with free SSL management via Let's Encrypt certificates. It includes a beautiful web interface to easily manage your proxies, hosts, and certificates.
 
-- SSL-Unterstützung mit automatischer Let's Encrypt-Integration
-- Weiterleitung von Anfragen an verschiedene lokale oder entfernte Dienste
-- Zugriffsschutz mit einfacher Authentifizierung
-- Verwaltung von benutzerdefinierten SSL-Zertifikaten
-- Umfangreiche Protokollierungsfunktionen
+## Features
 
-Die Konfiguration nutzt Docker Compose mit MariaDB als Datenbank-Backend und ermöglicht eine einfache Anpassung über Umgebungsvariablen.
+- **Easy deployment** with Docker Compose
+- **Environment variable configuration** via `.env` file
+- **MariaDB backend** for configuration storage
+- **Automatic SSL certificate generation** via Let's Encrypt
+- **Web UI** for easy management
 
-## 🔧 Voraussetzungen
+## Requirements
 
-- Docker (empfohlen: Version 20.10.0 oder höher)
-- Docker Compose (empfohlen: Version 2.0.0 oder höher)
-- Ein System mit offenen Ports 80, 443 und 81 (oder angepasst in der .env-Datei)
+- Docker Engine (20.10+)
+- Docker Compose (2.0+)
+- Open ports for HTTP (80), HTTPS (443), and Admin Panel (81)
 
-## 🚀 Installation
+## Quick Start
 
-1. Klonen Sie dieses Repository:
+1. Clone this repository:
    ```bash
-   git clone https://github.com/ihr-username/nginx-proxy-manager.git
+   git clone https://github.com/yourusername/nginx-proxy-manager.git
    cd nginx-proxy-manager
    ```
 
-2. Passen Sie bei Bedarf die Umgebungsvariablen in der `.env`-Datei an (siehe Konfiguration).
+2. Customize your configuration by editing the `.env` file:
+   ```bash
+   cp .env.example .env
+   nano .env
+   ```
 
-3. Starten Sie die Container:
+3. Start the containers:
    ```bash
    docker-compose up -d
    ```
 
-4. Greifen Sie auf die Admin-Oberfläche zu unter:
-   ```
-   http://ihre-server-ip:81
-   ```
+4. Access the admin interface at http://localhost:81 (or your server IP)
 
-5. Melden Sie sich mit den Standardanmeldedaten an:
-   - E-Mail: `admin@example.com`
-   - Passwort: `changeme`
+5. Login with the default credentials:
+   - Email: `admin@example.com`
+   - Password: `changeme`
 
-6. **Wichtig**: Ändern Sie sofort das Standardpasswort nach der ersten Anmeldung!
+   **Important**: Change these default credentials after your first login!
 
-## ⚙️ Konfiguration
+## Configuration
 
-Die Konfiguration erfolgt über die `.env`-Datei. Hier sind die verfügbaren Optionen:
+The `.env` file contains all configurable options:
 
-| Variable | Beschreibung | Standardwert |
-|----------|-------------|--------------|
-| `NGINX_IMAGE` | Docker Image für Nginx Proxy Manager | `jc21/nginx-proxy-manager:latest` |
-| `HTTP_PORT` | HTTP Port (Host) | `80` |
-| `HTTPS_PORT` | HTTPS Port (Host) | `443` |
-| `ADMIN_PORT` | Admin-Web-Interface Port (Host) | `81` |
-| `DB_MYSQL_HOST` | MariaDB Hostname | `db` |
-| `DB_MYSQL_PORT` | MariaDB Port | `3306` |
-| `DB_MYSQL_USER` | MariaDB Benutzername | `npm` |
-| `DB_MYSQL_PASSWORD` | MariaDB Passwort | `npm` |
-| `DB_MYSQL_NAME` | MariaDB Datenbankname | `npm` |
-| `DISABLE_IPV6` | IPv6-Unterstützung deaktivieren | `true` |
-| `DB_IMAGE` | Docker Image für MariaDB | `jc21/mariadb-aria:latest` |
-| `MYSQL_ROOT_PASSWORD` | MariaDB Root-Passwort | `npm` |
-| `MYSQL_DATABASE` | Zu erstellende Datenbank | `npm` |
-| `MYSQL_USER` | Zu erstellender Datenbankbenutzer | `npm` |
-| `MYSQL_PASSWORD` | Passwort für Datenbankbenutzer | `npm` |
-| `MARIADB_AUTO_UPGRADE` | Automatisches Upgrade der Datenbank | `1` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| NGINX_IMAGE | Nginx Proxy Manager image | jc21/nginx-proxy-manager:latest |
+| HTTP_PORT | HTTP port | 80 |
+| HTTPS_PORT | HTTPS port | 443 |
+| ADMIN_PORT | Admin interface port | 81 |
+| DB_MYSQL_HOST | Database host | db |
+| DB_MYSQL_PORT | Database port | 3306 |
+| DB_MYSQL_USER | Database user | npm |
+| DB_MYSQL_PASSWORD | Database password | npm |
+| DB_MYSQL_NAME | Database name | npm |
+| DISABLE_IPV6 | Disable IPv6 | true |
+| DB_IMAGE | MariaDB image | jc21/mariadb-aria:latest |
+| MYSQL_ROOT_PASSWORD | MySQL root password | npm |
+| MYSQL_DATABASE | MySQL database name | npm |
+| MYSQL_USER | MySQL user | npm |
+| MYSQL_PASSWORD | MySQL user password | npm |
+| MARIADB_AUTO_UPGRADE | Auto upgrade MariaDB | 1 |
 
-**Hinweis zur Sicherheit**: Für Produktionsumgebungen sollten Sie unbedingt die Standard-Passwörter in der `.env`-Datei ändern!
+## Data Volumes
 
-## 📁 Dateien im Repository
+The setup creates three Docker volumes:
 
-- `docker-compose.yml` - Die Hauptkonfigurationsdatei für Docker Compose
-- `.env` - Umgebungsvariablen für die Konfiguration
-- `README.md` - Diese Dokumentation
+1. `data` - Stores Nginx Proxy Manager configuration
+2. `letsencrypt` - Stores SSL certificates from Let's Encrypt
+3. `mysql` - Stores the MariaDB database
 
-## 💾 Persistente Daten
+## Common Tasks
 
-Die folgenden Docker Volumes werden für persistente Daten verwendet:
+### Adding a Proxy Host
 
-- `data` - Konfigurationsdaten des Nginx Proxy Managers
-- `letsencrypt` - Let's Encrypt Zertifikate und Konfiguration
-- `mysql` - MariaDB Datenbankdaten
+1. Access the admin interface at http://localhost:81
+2. Go to "Proxy Hosts" and click "Add Proxy Host"
+3. Fill in the details:
+   - Domain Name: your-domain.com
+   - Scheme: http or https
+   - Forward Hostname/IP: IP or hostname of your service
+   - Forward Port: Port of your service
+4. Configure SSL if needed (Let's Encrypt can be set up automatically)
+5. Save
 
-## 🔍 Troubleshooting
+### Updating the Application
 
-### Die Weboberfläche ist nicht erreichbar
-
-1. Überprüfen Sie, ob die Container laufen:
-   ```bash
-   docker-compose ps
-   ```
-
-2. Prüfen Sie die Logs auf Fehler:
-   ```bash
-   docker-compose logs app
-   docker-compose logs db
-   ```
-
-3. Stellen Sie sicher, dass die Ports nicht von anderen Diensten belegt sind:
-   ```bash
-   netstat -tulpn | grep -E '80|81|443'
-   ```
-
-### Datenbank-Verbindungsfehler
-
-Wenn der Nginx Proxy Manager keine Verbindung zur Datenbank herstellen kann:
-
-1. Stellen Sie sicher, dass der MariaDB-Container läuft:
-   ```bash
-   docker-compose logs db
-   ```
-
-2. Überprüfen Sie die Zugangsdaten in der `.env`-Datei
-
-3. Bei Bedarf können Sie die Datenbank zurücksetzen:
-   ```bash
-   docker-compose down -v
-   docker-compose up -d
-   ```
-   **Achtung**: Dies löscht alle konfigurierten Proxy-Hosts und Einstellungen!
-
-## 📋 Updates
-
-Um auf eine neuere Version zu aktualisieren:
+To update to the latest version:
 
 ```bash
-# Repository aktualisieren (falls nötig)
-git pull
-
-# Container mit neuen Images starten
 docker-compose pull
 docker-compose up -d
 ```
 
-## 📜 Lizenz
+## Troubleshooting
 
-Dieses Projekt steht unter der MIT-Lizenz. Siehe die LICENSE-Datei für Details.
+### Cannot access the admin interface
 
-## 🔗 Nützliche Links
+- Verify that all containers are running: `docker-compose ps`
+- Check container logs: `docker-compose logs -f app`
+- Ensure port 81 is not being used by another service
+- Check firewall settings to allow traffic on ports 80, 443, and 81
 
-- [Offizielle Nginx Proxy Manager Dokumentation](https://nginxproxymanager.com/guide/)
-- [Docker-Dokumentation](https://docs.docker.com/)
-- [Docker Compose-Dokumentation](https://docs.docker.com/compose/)
+### Database connection issues
 
----
+- Verify that the database container is running: `docker-compose ps db`
+- Check database logs: `docker-compose logs -f db`
+- Ensure that the environment variables in the `.env` file match the configuration
 
-Bei Fragen oder Problemen eröffnen Sie bitte ein Issue in diesem Repository.
+## Security Recommendations
+
+1. Change default database credentials in the `.env` file
+2. Change the admin user credentials after first login
+3. Do not expose port 81 to the internet (use a local network or VPN to access)
+4. Configure a strong firewall to only allow necessary traffic
+
+## License
+
+This project is distributed under the MIT License. See the LICENSE file for more details.
+
+## Acknowledgements
+
+- [jc21](https://github.com/jc21) for creating the Nginx Proxy Manager
+- Docker and Docker Compose for containerization
