@@ -122,12 +122,3 @@ docker-compose up -d
 2. Change the admin user credentials after first login
 3. Do not expose port 81 to the internet (use a local network or VPN to access)
 4. Configure a strong firewall to only allow necessary traffic
-
-## License
-
-This project is distributed under the MIT License. See the LICENSE file for more details.
-
-## Acknowledgements
-
-- [jc21](https://github.com/jc21) for creating the Nginx Proxy Manager
-- Docker and Docker Compose for containerization
