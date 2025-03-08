@@ -1,124 +1,160 @@
-# Nginx Proxy Manager Docker Setup
+# Nginx Proxy Manager with Environment Variables
 
-This repository contains a Docker Compose configuration for easily deploying Nginx Proxy Manager with a MariaDB database backend. The setup uses environment variables for all configuration options, making it flexible and secure.
+This repository contains a refined Docker Compose configuration for Nginx Proxy Manager that implements best practices for configuration management by using environment variables.
 
-## What is Nginx Proxy Manager?
+## Purpose
 
-Nginx Proxy Manager (NPM) is a Docker container that enables you to easily forward domains and subdomains to your various Docker containers and other services, with free SSL management via Let's Encrypt certificates. It includes a beautiful web interface to easily manage your proxies, hosts, and certificates.
+The purpose of this project is to demonstrate how to refine GitHub repositories by implementing proper configuration management. Specifically, this example shows how to:
 
-## Features
+1. Move sensitive and configurable data from hardcoded values in Docker Compose files to environment variables
+2. Improve maintainability and portability of Docker configurations
+3. Follow security best practices for Docker deployments
 
-- **Easy deployment** with Docker Compose
-- **Environment variable configuration** via `.env` file
-- **MariaDB backend** for configuration storage
-- **Automatic SSL certificate generation** via Let's Encrypt
-- **Web UI** for easy management
+## Components
 
-## Requirements
+The setup consists of:
 
-- Docker Engine (20.10+)
-- Docker Compose (2.0+)
-- Open ports for HTTP (80), HTTPS (443), and Admin Panel (81)
+- **Nginx Proxy Manager**: A web interface for managing Nginx proxy hosts
+- **MariaDB**: Database backend for storing proxy configurations
+- **Environment Variables**: Centralized in a `.env` file for easier management
 
-## Quick Start
+## Prerequisites
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/nginx-proxy-manager.git
-   cd nginx-proxy-manager
-   ```
+- Docker and Docker Compose installed on your system
+- Basic understanding of networking concepts
+- Port 80, 443, and 81 available on your host machine (or customized in the `.env` file)
 
-2. Customize your configuration by editing the `.env` file:
-   ```bash
-   cp .env.example .env
-   nano .env
-   ```
+## Setup Instructions
 
-3. Start the containers:
-   ```bash
-   docker-compose up -d
-   ```
-
-4. Access the admin interface at http://localhost:81 (or your server IP)
-
-5. Login with the default credentials:
-   - Email: `admin@example.com`
-   - Password: `changeme`
-
-   **Important**: Change these default credentials after your first login!
-
-## Configuration
-
-The `.env` file contains all configurable options:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| NGINX_IMAGE | Nginx Proxy Manager image | jc21/nginx-proxy-manager:latest |
-| HTTP_PORT | HTTP port | 80 |
-| HTTPS_PORT | HTTPS port | 443 |
-| ADMIN_PORT | Admin interface port | 81 |
-| DB_MYSQL_HOST | Database host | db |
-| DB_MYSQL_PORT | Database port | 3306 |
-| DB_MYSQL_USER | Database user | npm |
-| DB_MYSQL_PASSWORD | Database password | npm |
-| DB_MYSQL_NAME | Database name | npm |
-| DISABLE_IPV6 | Disable IPv6 | true |
-| DB_IMAGE | MariaDB image | jc21/mariadb-aria:latest |
-| MYSQL_ROOT_PASSWORD | MySQL root password | npm |
-| MYSQL_DATABASE | MySQL database name | npm |
-| MYSQL_USER | MySQL user | npm |
-| MYSQL_PASSWORD | MySQL user password | npm |
-| MARIADB_AUTO_UPGRADE | Auto upgrade MariaDB | 1 |
-
-## Data Volumes
-
-The setup creates three Docker volumes:
-
-1. `data` - Stores Nginx Proxy Manager configuration
-2. `letsencrypt` - Stores SSL certificates from Let's Encrypt
-3. `mysql` - Stores the MariaDB database
-
-## Common Tasks
-
-### Adding a Proxy Host
-
-1. Access the admin interface at http://localhost:81
-2. Go to "Proxy Hosts" and click "Add Proxy Host"
-3. Fill in the details:
-   - Domain Name: your-domain.com
-   - Scheme: http or https
-   - Forward Hostname/IP: IP or hostname of your service
-   - Forward Port: Port of your service
-4. Configure SSL if needed (Let's Encrypt can be set up automatically)
-5. Save
-
-### Updating the Application
-
-To update to the latest version:
+### 1. Clone the Repository
 
 ```bash
-docker-compose pull
-docker-compose up -d
+git clone https://github.com/your-username/nginx-proxy-manager-env.git
+cd nginx-proxy-manager-env
 ```
 
-## Troubleshooting
+### 2. Configure Environment Variables
 
-### Cannot access the admin interface
+The `.env` file contains all configurable parameters. Review and adjust according to your needs:
 
-- Verify that all containers are running: `docker-compose ps`
-- Check container logs: `docker-compose logs -f app`
-- Ensure port 81 is not being used by another service
-- Check firewall settings to allow traffic on ports 80, 443, and 81
+```properties
+# Container configuration
+NGINX_CONTAINER_NAME=Nginx
+MARIADB_CONTAINER_NAME=MariaDB
 
-### Database connection issues
+# Network ports
+HTTP_PORT=80
+HTTPS_PORT=443
+ADMIN_PORT=81
 
-- Verify that the database container is running: `docker-compose ps db`
-- Check database logs: `docker-compose logs -f db`
-- Ensure that the environment variables in the `.env` file match the configuration
+# Database configuration
+DB_HOST=db
+DB_PORT=3306
+DB_USER=npm
+DB_PASSWORD=npm
+DB_NAME=npm
+MYSQL_ROOT_PASSWORD=npm
+
+# IPv6 configuration
+DISABLE_IPV6=true
+
+# Database auto upgrade
+MARIADB_AUTO_UPGRADE=1
+```
+
+> **Important Security Note**: For production environments, change the default database passwords to strong, unique values.
+
+### 3. Start the Services
+
+```bash
+docker compose up -d
+```
+
+### 4. Access the Admin Interface
+
+Once containers are running, access the admin interface at:
+
+```
+http://your-server-ip:81
+```
+
+Default login credentials:
+- Email: `admin@example.com`
+- Password: `changeme`
+
+> **Important**: Change the default admin credentials immediately after first login.
+
+## Environment Variables Explained
+
+### Container Names
+- `NGINX_CONTAINER_NAME`: Name for the Nginx Proxy Manager container
+- `MARIADB_CONTAINER_NAME`: Name for the MariaDB container
+
+### Network Ports
+- `HTTP_PORT`: Public HTTP port (default: 80)
+- `HTTPS_PORT`: Public HTTPS port (default: 443)
+- `ADMIN_PORT`: Admin web interface port (default: 81)
+
+### Database Configuration
+- `DB_HOST`: Database hostname (default: db)
+- `DB_PORT`: Database port (default: 3306)
+- `DB_USER`: Database username
+- `DB_PASSWORD`: Database user password
+- `DB_NAME`: Database name
+- `MYSQL_ROOT_PASSWORD`: MariaDB root password
+
+### Additional Settings
+- `DISABLE_IPV6`: Disable IPv6 support if needed (default: true)
+- `MARIADB_AUTO_UPGRADE`: Enable automatic database upgrades (default: 1)
+
+## Customization
+
+### Changing Ports
+
+If ports 80, 443, or 81 are already in use on your system, you can modify the corresponding variables in the `.env` file:
+
+```properties
+HTTP_PORT=8080
+HTTPS_PORT=8443
+ADMIN_PORT=8081
+```
+
+### Persistent Data
+
+All data is stored in Docker volumes:
+- `data`: Nginx Proxy Manager data
+- `letsencrypt`: SSL certificates
+- `mysql`: Database files
 
 ## Security Recommendations
 
-1. Change default database credentials in the `.env` file
-2. Change the admin user credentials after first login
-3. Do not expose port 81 to the internet (use a local network or VPN to access)
-4. Configure a strong firewall to only allow necessary traffic
+1. **Change Default Passwords**: Modify all default passwords in the `.env` file
+2. **Restrict Admin Port**: Consider using a firewall to restrict access to port 81
+3. **Add .env to .gitignore**: Never commit your `.env` file to version control
+4. **Regular Backups**: Implement backup procedures for the Docker volumes
+
+## Troubleshooting
+
+### Database Connection Issues
+
+If Nginx Proxy Manager cannot connect to the database:
+1. Ensure the MariaDB container is running: `docker ps`
+2. Check logs for errors: `docker logs MariaDB`
+3. Verify environment variables are correctly set
+
+### Port Conflicts
+
+If you see errors like "port is already allocated":
+1. Identify which application is using the port: `sudo lsof -i :80`
+2. Either stop the conflicting application or change the port in the `.env` file
+
+## Contributing
+
+Contributions to improve this configuration are welcome. Please follow these steps:
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request with a clear description of your changes
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
