@@ -79,8 +79,14 @@ http://your-server-ip:81
 ```
 
 Default login credentials:
-- Email: `admin@example.com`
-- Password: `changeme`
+- Email:
+```
+admin@example.com
+```
+- Password:
+```
+changeme
+```
 
 > **Important**: Change the default admin credentials immediately after first login.
 
